@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Fedimint Stack — Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0a0e17;--surface:#111827;--surface2:#1a2234;--border:#1e2d45;
+  --text:#e2e8f0;--dim:#64748b;--accent:#f7931a;--accent2:#8b5cf6;
+  --green:#22c55e;--red:#ef4444;--blue:#3b82f6;--cyan:#06b6d4;
+  --lightning:#f59e0b;--fedimint:#a855f7;
+  --radius:12px;
+}
+html{font-size:15px}
+body{
+  font-family:'Space Grotesk',system-ui,sans-serif;
+  background:var(--bg);color:var(--text);
+  min-height:100vh;overflow-x:hidden;
+}
+
+/* ── Header ─────────────────────────────────────── */
+header{
+  padding:2rem 2rem 1.5rem;
+  background:linear-gradient(135deg,#0f172a 0%,#1a1040 50%,#0f172a 100%);
+  border-bottom:1px solid var(--border);
+  position:relative;overflow:hidden;
+}
+header::before{
+  content:'';position:absolute;top:-50%;right:-20%;
+  width:600px;height:600px;border-radius:50%;
+  background:radial-gradient(circle,rgba(247,147,26,.08) 0%,transparent 70%);
+  pointer-events:none;
+}
+.header-row{display:flex;align-items:center;gap:1rem;position:relative}
+.logo{
+  width:52px;height:52px;border-radius:var(--radius);
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  display:grid;place-items:center;font-size:1.6rem;font-weight:700;
+  color:#fff;flex-shrink:0;
+}
+h1{font-size:1.6rem;font-weight:700;letter-spacing:-.02em}
+h1 span{color:var(--accent)}
+.subtitle{color:var(--dim);font-size:.85rem;margin-top:.15rem}
+
+/* ── Status Bar ──────────────────────────────────── */
+.status-bar{
+  display:flex;flex-wrap:wrap;gap:.6rem;
+  padding:1rem 2rem;background:var(--surface);
+  border-bottom:1px solid var(--border);
+}
+.status-pill{
+  display:flex;align-items:center;gap:.4rem;
+  padding:.35rem .75rem;border-radius:20px;
+  background:var(--surface2);font-size:.75rem;font-weight:500;
+  border:1px solid var(--border);
+}
+.dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.dot.ok{background:var(--green);box-shadow:0 0 6px rgba(34,197,94,.5)}
+.dot.err{background:var(--red);box-shadow:0 0 6px rgba(239,68,68,.5)}
+.dot.loading{background:var(--lightning);animation:pulse 1.2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+
+/* ── Grid ────────────────────────────────────────── */
+main{padding:1.5rem 2rem 3rem;display:grid;gap:1.2rem;
+  grid-template-columns:repeat(auto-fill,minmax(340px,1fr));}
+
+.card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--radius);overflow:hidden;
+  transition:border-color .2s,box-shadow .2s;
+}
+.card:hover{
+  border-color:rgba(247,147,26,.3);
+  box-shadow:0 0 20px rgba(247,147,26,.06);
+}
+.card-head{
+  display:flex;align-items:center;gap:.7rem;
+  padding:1rem 1.2rem;border-bottom:1px solid var(--border);
+}
+.card-icon{
+  width:36px;height:36px;border-radius:10px;display:grid;
+  place-items:center;font-size:1.1rem;flex-shrink:0;
+}
+.card-icon.btc{background:rgba(247,147,26,.15);color:var(--accent)}
+.card-icon.ln{background:rgba(245,158,11,.15);color:var(--lightning)}
+.card-icon.fm{background:rgba(168,85,247,.15);color:var(--fedimint)}
+.card-icon.gw{background:rgba(6,182,212,.15);color:var(--cyan)}
+.card-title{font-weight:600;font-size:.95rem}
+.card-label{font-size:.7rem;color:var(--dim);margin-top:.1rem}
+.card-body{padding:1.2rem}
+
+/* ── KV rows ─────────────────────────────────────── */
+.kv{display:flex;justify-content:space-between;align-items:baseline;
+  padding:.4rem 0;font-size:.82rem}
+.kv+.kv{border-top:1px solid rgba(30,45,69,.5)}
+.kv-key{color:var(--dim)}
+.kv-val{
+  font-family:'JetBrains Mono',monospace;font-weight:600;
+  text-align:right;word-break:break-all;
+}
+
+/* ── Link cards ──────────────────────────────────── */
+.links{
+  grid-column:1/-1;display:grid;gap:.8rem;
+  grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
+}
+.link-card{
+  display:flex;align-items:center;gap:.8rem;
+  padding:1rem 1.2rem;border-radius:var(--radius);
+  background:var(--surface);border:1px solid var(--border);
+  text-decoration:none;color:var(--text);
+  transition:all .2s;
+}
+.link-card:hover{
+  transform:translateY(-2px);
+  border-color:var(--accent);
+  box-shadow:0 8px 24px rgba(0,0,0,.3);
+}
+.link-icon{
+  width:42px;height:42px;border-radius:10px;display:grid;
+  place-items:center;font-size:1.2rem;flex-shrink:0;
+}
+.link-icon.rtl{background:linear-gradient(135deg,#f59e0b,#ea580c);color:#fff}
+.link-icon.fmui{background:linear-gradient(135deg,#a855f7,#6366f1);color:#fff}
+.link-icon.gwui{background:linear-gradient(135deg,#06b6d4,#3b82f6);color:#fff}
+.link-name{font-weight:600;font-size:.9rem}
+.link-url{font-size:.7rem;color:var(--dim);font-family:'JetBrains Mono',monospace}
+
+/* ── Actions ─────────────────────────────────────── */
+.actions{grid-column:1/-1}
+.actions h2{font-size:1rem;font-weight:600;margin-bottom:.8rem}
+.btn-row{display:flex;flex-wrap:wrap;gap:.6rem}
+button{
+  font-family:inherit;font-size:.8rem;font-weight:600;
+  padding:.55rem 1.2rem;border-radius:8px;border:none;cursor:pointer;
+  transition:all .15s;display:flex;align-items:center;gap:.4rem;
+}
+.btn-primary{background:var(--accent);color:#fff}
+.btn-primary:hover{filter:brightness(1.15);transform:translateY(-1px)}
+.btn-secondary{background:var(--surface2);color:var(--text);border:1px solid var(--border)}
+.btn-secondary:hover{border-color:var(--accent);color:var(--accent)}
+
+.toast{
+  position:fixed;bottom:1.5rem;right:1.5rem;
+  background:var(--surface2);border:1px solid var(--border);
+  padding:.8rem 1.2rem;border-radius:10px;font-size:.82rem;
+  box-shadow:0 10px 40px rgba(0,0,0,.5);
+  transform:translateY(120%);opacity:0;transition:all .3s;
+  z-index:100;font-family:'JetBrains Mono',monospace;
+}
+.toast.show{transform:translateY(0);opacity:1}
+
+@media(max-width:600px){
+  main{padding:1rem;grid-template-columns:1fr}
+  header{padding:1.5rem 1rem 1rem}
+  .status-bar{padding:.8rem 1rem}
+  .links{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-row">
+    <div class="logo">F</div>
+    <div>
+      <h1><span>Bitcoin</span> / Lightning / Fedimint</h1>
+      <div class="subtitle">Local development stack &mdash; regtest network</div>
+    </div>
+  </div>
+</header>
+
+<div class="status-bar" id="statusBar">
+  <div class="status-pill"><span class="dot loading" id="dot-btc"></span>Bitcoin Core</div>
+  <div class="status-pill"><span class="dot loading" id="dot-lnd"></span>LND</div>
+  <div class="status-pill"><span class="dot loading" id="dot-fm"></span>Fedimint</div>
+  <div class="status-pill"><span class="dot loading" id="dot-gw"></span>Gateway</div>
+  <div class="status-pill"><span class="dot loading" id="dot-rtl"></span>RTL</div>
+</div>
+
+<main>
+  <!-- Bitcoin Card -->
+  <div class="card">
+    <div class="card-head">
+      <div class="card-icon btc">&#8383;</div>
+      <div><div class="card-title">Bitcoin Core</div><div class="card-label">regtest &middot; Layer 1</div></div>
+    </div>
+    <div class="card-body" id="btc-info">
+      <div class="kv"><span class="kv-key">Block Height</span><span class="kv-val" id="btc-height">—</span></div>
+      <div class="kv"><span class="kv-key">Chain</span><span class="kv-val" id="btc-chain">—</span></div>
+      <div class="kv"><span class="kv-key">Difficulty</span><span class="kv-val" id="btc-diff">—</span></div>
+      <div class="kv"><span class="kv-key">Connections</span><span class="kv-val" id="btc-conn">—</span></div>
+      <div class="kv"><span class="kv-key">Version</span><span class="kv-val" id="btc-ver">—</span></div>
+      <div class="kv"><span class="kv-key">RPC Endpoint</span><span class="kv-val">localhost:18443</span></div>
+    </div>
+  </div>
+
+  <!-- LND Card -->
+  <div class="card">
+    <div class="card-head">
+      <div class="card-icon ln">&#9889;</div>
+      <div><div class="card-title">Lightning (LND)</div><div class="card-label">Layer 2 &middot; Payment Channels</div></div>
+    </div>
+    <div class="card-body" id="lnd-info">
+      <div class="kv"><span class="kv-key">Synced to Chain</span><span class="kv-val" id="lnd-synced">—</span></div>
+      <div class="kv"><span class="kv-key">Block Height</span><span class="kv-val" id="lnd-height">—</span></div>
+      <div class="kv"><span class="kv-key">Active Channels</span><span class="kv-val" id="lnd-channels">—</span></div>
+      <div class="kv"><span class="kv-key">Peers</span><span class="kv-val" id="lnd-peers">—</span></div>
+      <div class="kv"><span class="kv-key">Alias</span><span class="kv-val" id="lnd-alias">—</span></div>
+      <div class="kv"><span class="kv-key">REST API</span><span class="kv-val">localhost:8080</span></div>
+    </div>
+  </div>
+
+  <!-- Fedimint Card -->
+  <div class="card">
+    <div class="card-head">
+      <div class="card-icon fm">&#9878;</div>
+      <div><div class="card-title">Fedimint Guardian</div><div class="card-label">Federated E-Cash Mint</div></div>
+    </div>
+    <div class="card-body" id="fm-info">
+      <div class="kv"><span class="kv-key">Status</span><span class="kv-val" id="fm-status">—</span></div>
+      <div class="kv"><span class="kv-key">Network</span><span class="kv-val">regtest</span></div>
+      <div class="kv"><span class="kv-key">API</span><span class="kv-val">ws://localhost:8174</span></div>
+      <div class="kv"><span class="kv-key">P2P</span><span class="kv-val">localhost:8173</span></div>
+      <div class="kv"><span class="kv-key">Guardian UI</span><span class="kv-val"><a href="http://localhost:8175" target="_blank" style="color:var(--fedimint)">Open</a></span></div>
+    </div>
+  </div>
+
+  <!-- Gateway Card -->
+  <div class="card">
+    <div class="card-head">
+      <div class="card-icon gw">&#8644;</div>
+      <div><div class="card-title">Lightning Gateway</div><div class="card-label">Fedimint ↔ Lightning Bridge</div></div>
+    </div>
+    <div class="card-body" id="gw-info">
+      <div class="kv"><span class="kv-key">Status</span><span class="kv-val" id="gw-status">—</span></div>
+      <div class="kv"><span class="kv-key">Lightning Backend</span><span class="kv-val">LND</span></div>
+      <div class="kv"><span class="kv-key">API</span><span class="kv-val">localhost:8176</span></div>
+    </div>
+  </div>
+
+  <!-- Quick Links -->
+  <div class="links">
+    <a class="link-card" href="http://localhost:3003" target="_blank">
+      <div class="link-icon rtl">&#9889;</div>
+      <div>
+        <div class="link-name">Ride The Lightning</div>
+        <div class="link-url">localhost:3003</div>
+      </div>
+    </a>
+    <a class="link-card" href="http://localhost:8175" target="_blank">
+      <div class="link-icon fmui">&#9878;</div>
+      <div>
+        <div class="link-name">Guardian UI</div>
+        <div class="link-url">localhost:8175</div>
+      </div>
+    </a>
+    <a class="link-card" href="http://localhost:8176" target="_blank">
+      <div class="link-icon gwui">&#8644;</div>
+      <div>
+        <div class="link-name">Gateway API</div>
+        <div class="link-url">localhost:8176</div>
+      </div>
+    </a>
+  </div>
+
+  <!-- Quick Actions -->
+  <div class="actions">
+    <h2>Quick Actions</h2>
+    <div class="btn-row">
+      <button class="btn-primary" onclick="mineBlock(1)">&#9874; Mine 1 Block</button>
+      <button class="btn-secondary" onclick="mineBlock(10)">Mine 10 Blocks</button>
+      <button class="btn-secondary" onclick="mineBlock(100)">Mine 100 Blocks</button>
+      <button class="btn-secondary" onclick="refreshAll()">&#8635; Refresh Status</button>
+    </div>
+  </div>
+</main>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const $ = id => document.getElementById(id);
+
+function toast(msg) {
+  const t = $('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(t._tid);
+  t._tid = setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+function setDot(id, ok) {
+  const el = $(id);
+  el.classList.remove('loading','ok','err');
+  el.classList.add(ok ? 'ok' : 'err');
+}
+
+async function fetchBitcoin() {
+  try {
+    const data = await rpcCall('/api/bitcoin/', 'getblockchaininfo', []);
+    if (data.result) {
+      $('btc-height').textContent = data.result.blocks.toLocaleString();
+      $('btc-chain').textContent = data.result.chain;
+      $('btc-diff').textContent = data.result.difficulty;
+      setDot('dot-btc', true);
+    }
+    const data2 = await rpcCall('/api/bitcoin/', 'getnetworkinfo', []);
+    if (data2.result) {
+      $('btc-conn').textContent = data2.result.connections;
+      $('btc-ver').textContent = data2.result.subversion;
+    }
+  } catch {
+    setDot('dot-btc', false);
+  }
+}
+
+async function fetchLnd() {
+  try {
+    const resp = await fetch('/api/lnd/v1/getinfo', {
+      headers: { 'Grpc-Metadata-macaroon': '' }
+    });
+    if (resp.ok) {
+      const data = await resp.json();
+      $('lnd-synced').textContent = data.synced_to_chain ? 'Yes' : 'No';
+      $('lnd-height').textContent = (data.block_height || 0).toLocaleString();
+      $('lnd-channels').textContent = data.num_active_channels || 0;
+      $('lnd-peers').textContent = data.num_peers || 0;
+      $('lnd-alias').textContent = data.alias || '—';
+      setDot('dot-lnd', true);
+    } else {
+      setDot('dot-lnd', false);
+    }
+  } catch {
+    setDot('dot-lnd', false);
+  }
+}
+
+async function fetchFedimint() {
+  try {
+    const resp = await fetch('/api/fedimint/', { signal: AbortSignal.timeout(3000) });
+    if (resp.ok || resp.status === 400) {
+      $('fm-status').textContent = 'Running';
+      $('fm-status').style.color = 'var(--green)';
+      setDot('dot-fm', true);
+    } else {
+      $('fm-status').textContent = 'Unavailable';
+      setDot('dot-fm', false);
+    }
+  } catch {
+    try {
+      const ws = new WebSocket('ws://localhost:8174');
+      ws.onopen = () => { $('fm-status').textContent = 'Running (WS)'; $('fm-status').style.color = 'var(--green)'; setDot('dot-fm', true); ws.close(); };
+      ws.onerror = () => { $('fm-status').textContent = 'Unavailable'; setDot('dot-fm', false); };
+      setTimeout(() => ws.close(), 3000);
+    } catch {
+      $('fm-status').textContent = 'Unavailable';
+      setDot('dot-fm', false);
+    }
+  }
+}
+
+async function fetchGateway() {
+  try {
+    const resp = await fetch('/api/gateway/health', { signal: AbortSignal.timeout(3000) });
+    if (resp.ok) {
+      $('gw-status').textContent = 'Healthy';
+      $('gw-status').style.color = 'var(--green)';
+      setDot('dot-gw', true);
+    } else {
+      $('gw-status').textContent = 'Running';
+      $('gw-status').style.color = 'var(--lightning)';
+      setDot('dot-gw', true);
+    }
+  } catch {
+    $('gw-status').textContent = 'Unavailable';
+    setDot('dot-gw', false);
+  }
+}
+
+async function checkRtl() {
+  try {
+    const resp = await fetch('http://localhost:3003', { mode: 'no-cors', signal: AbortSignal.timeout(3000) });
+    setDot('dot-rtl', true);
+  } catch {
+    setDot('dot-rtl', false);
+  }
+}
+
+async function rpcCall(endpoint, method, params) {
+  const resp = await fetch(endpoint, {
+    method: 'POST',
+    headers: { 'Content-Type':'application/json', 'Authorization':'Basic '+btoa('bitcoin:bitcoin') },
+    body: JSON.stringify({ jsonrpc:'1.0', id:'dash', method, params })
+  });
+  return resp.json();
+}
+
+async function ensureWallet() {
+  const check = await rpcCall('/api/bitcoin/', 'listwallets', []);
+  if (check.result && check.result.length === 0) {
+    await rpcCall('/api/bitcoin/', 'createwallet', ['miner']);
+  } else if (check.result && !check.result.includes('miner')) {
+    try { await rpcCall('/api/bitcoin/', 'loadwallet', ['miner']); } catch {}
+  }
+}
+
+async function mineBlock(n) {
+  toast(`Mining ${n} block(s)…`);
+  try {
+    await ensureWallet();
+    const addrData = await rpcCall('/api/bitcoin-wallet/', 'getnewaddress', ['','bech32']);
+    const addr = addrData.result;
+    await rpcCall('/api/bitcoin-wallet/', 'generatetoaddress', [n, addr]);
+    toast(`Mined ${n} block(s)!`);
+    setTimeout(refreshAll, 500);
+  } catch(e) {
+    toast('Mining failed — is bitcoind running?');
+  }
+}
+
+function refreshAll() {
+  fetchBitcoin();
+  fetchLnd();
+  fetchFedimint();
+  fetchGateway();
+  checkRtl();
+}
+
+refreshAll();
+setInterval(refreshAll, 8000);
+</script>
+</body>
+</html>
